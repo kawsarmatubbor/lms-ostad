@@ -1,3 +1,4 @@
+from django.contrib.auth import authenticate, login
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -36,3 +37,22 @@ class RegistrationView(APIView):
             return Response("Registration successful")
         
         return Response(serializer.errors)
+    
+class LoginView(APIView):
+    def get(self, request):
+        return Response("Login(GET)")
+    
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if not username or not password:
+            return Response("Username and password are required")
+
+        user = authenticate(username = username, password = password)
+
+        if user is not None:
+            login(request, user)
+            return Response("Login successful")
+        
+        return Response("Something went wrong")
